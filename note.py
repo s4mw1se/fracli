@@ -1,27 +1,47 @@
+"""A module to represent a note."""
+
+import json
 from datetime import datetime
 
+
 class Note:
-    def __init__(self, title:str, body:str, created_at:datetime, edited_at:datetime, priority:str, reminder:datetime, attachments:list[str], notebook:str, collaborators:list[str], tags:list[str]):
-        self.title:str = title
-        self.body:str = body
-        self.created_at:str = self._set_created_at(created_at)
-        self.edited_at:str = self._set_datetime(edited_at)
-        self.priority:str = priority
-        self.reminder:str = self._set_datetime(reminder)
-        self.attachments:list[str] = attachments
-        self.notebook:str = notebook
-        self.collaborators:list[str] = collaborators
-        self.tags:list[str] = tags
+    """A class to represent a note."""
+    def __init__(self, note_id:int, parent_note:'Note'= None):
+        self.note_id:int = note_id
+        self.note_color:str
+        self.title:str
+        self.ticket_id:str
+        self.ticket_link:str
+        self.priority:int
+        self.body:str
+        self.parent_note_id:int
+        self.status:int
+        self.collaborators:list[str]
+        self.tags:list[int]
+        self.attachments:list[str]
+        self.urls:list[str]
+        self.child_notes:list[int]
+        self.created_at:datetime = datetime.now()
+        self.edited_at:datetime
+        self.reminder:datetime
+        self.spirnt_start:datetime
+        self.sprint_end:datetime
+        self.previous_version_backup:list[Note] # store previous versions of the note when edited
         
-    def _set_created_at(self, created_at:datetime) -> str:
-        if created_at is None:
-            return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        else:
-            return created_at.strftime("%Y-%m-%d %H:%M:%S")
-    
-    def set_datetime(self, datetime:datetime) -> str | None:
-        if datetime is None:
-            self.edited_at = None
-        else:
-            self.edited_at datetime.strftime("%Y-%m-%d %H:%M:%S")
-        return edited_at.strftime("%Y-%m-%d %H:%M:%S")
+        if parent_note:
+            self.notebook = parent_note.notebook
+            self.parent_note_id = parent_note.note_id
+        
+       
+    def to_json(self):
+        dateformat = "%Y-%m-%d %H:%M"
+        
+        self.created_at = self.created_at.strftime(dateformat)
+        self.edited_at = self.edited_at.strftime(dateformat)
+        self.reminder = self.reminder.strftime(dateformat)
+        self.spirnt_start = self.spirnt_start.strftime(dateformat)
+        self.sprint_end = self.sprint_end.strftime(dateformat)
+        
+        return json.dumps(self, default=lambda o: o.__dict__, 
+            sort_keys=True, indent=4)
+        
