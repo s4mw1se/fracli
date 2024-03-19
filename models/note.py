@@ -230,3 +230,8 @@ class Note:
     def previous_version_backups(self) -> list['Note']:
         """Get the previous version backup of the note."""
         return self._previous_version_backups
+
+    @previous_version_backups.setter
+    def previous_version_backups(self, value: list['Note']) -> None:
+        """Set the previous version backup of the note."""
+        self._previous_version_backups = value
