@@ -1,181 +1,227 @@
-from datetime import datetime
-from models.note import Note
+""" Test the Note class. """
+
+from datetime import datetime, timedelta
 import pytest
+from models.note import Note
 
-
-def test_init():
+def test_note_creation():
+    """Test the creation of a Note object."""
     note = Note(1)
     assert note.note_id == 1
-    assert note._parent_note is None
-    assert note._note_color == ""
-    assert note._title == ""
-    assert note._ticket_id == ""
-    assert note._ticket_link == ""
-    assert note._priority == 0
-    assert note._body == ""
-    assert note._parent_note_id == 0
-    assert note._status == 1
-    assert note._collaborators is None
-    assert note._tags is None
-    assert note._attachments is None
-    assert note._urls is None
-    assert note._child_notes is None
-    assert note._created_at is None
-    assert note._edited_at is None
-    assert note._reminder is None
-    assert note._sprint_start is None
-    assert note._sprint_end is None
-    assert note._previous_version_backups is None
+    assert note.status == 1
+    assert note.created_at is None
 
 
-def test_note_color_property():
+def test_note_color():
+    """Test setting and getting the note color."""
     note = Note(1)
     note.note_color = "red"
     assert note.note_color == "red"
-    assert isinstance(note.note_color, str)
 
 
-def test_title_property():
+def test_title():
+    """Test setting and getting the note title."""
     note = Note(1)
     note.title = "Test Note"
     assert note.title == "Test Note"
-    assert isinstance(note.title, str)
 
 
-def test_ticket_id_property():
+def test_ticket_id():
+    """Test setting and getting the ticket ID."""
     note = Note(1)
-    note.ticket_id = "123"
-    assert note.ticket_id == "123"
-    assert isinstance(note.ticket_id, str)
+    note.ticket_id = "ABC-123"
+    assert note.ticket_id == "ABC-123"
+
     with pytest.raises(ValueError):
         note.ticket_id = 123
 
 
-def test_ticket_link_property():
+def test_ticket_link():
+    """Test setting and getting the ticket link."""
     note = Note(1)
     note.ticket_link = "https://example.com"
     assert note.ticket_link == "https://example.com"
-    assert isinstance(note.ticket_link, str)
+
     with pytest.raises(ValueError):
-        note.ticket_link = "example.com"
+        note.ticket_link = "invalid_link"
 
 
-def test_priority_property():
+def test_priority():
+    """Test setting and getting the note priority."""
     note = Note(1)
     note.priority = 3
     assert note.priority == 3
-    assert isinstance(note.priority, int)
+
     note.priority = 6
     assert note.priority == 0
 
 
-def test_body_property():
+def test_body():
+    """Test setting and getting the note body."""
     note = Note(1)
-    note.body = "Test body"
-    assert note.body == "Test body"
-    assert isinstance(note.body, str)
+    note.body = "This is a test note."
+    assert note.body == "This is a test note."
+
+    with pytest.raises(ValueError):
+        note.body = 123
 
 
-def test_parent_note_id_property():
+def test_parent_note_id():
+    """Test setting and getting the parent note ID."""
     note = Note(1)
-    note.parent_note_id = 2
-    assert note.parent_note_id == 2
-    assert isinstance(note.parent_note_id, int)
+    note.parent_note_id = 0
+    assert note.parent_note_id == 0
+
+    with pytest.raises(ValueError):
+        note.parent_note_id = -1
+
+    with pytest.raises(ValueError):
+        note.parent_note_id = 1
+
+    with pytest.raises(ValueError):
+        note.parent_note_id = 2
 
 
-def test_status_property():
+def test_status():
+    """Test setting and getting the note status."""
     note = Note(1)
     note.status = 2
     assert note.status == 2
-    assert isinstance(note.status, int)
-    note.status = 4
-    assert note.status == 1
+
+    with pytest.raises(ValueError):
+        note.status = -1
+
+    with pytest.raises(ValueError):
+        note.status = 4
+
+    with pytest.raises(ValueError):
+        note.status = "invalid"
 
 
-def test_collaborators_property():
+def test_collaborators():
+    """Test setting and getting the note collaborators."""
     note = Note(1)
     note.collaborators = ["user1", "user2"]
     assert note.collaborators == ["user1", "user2"]
-    assert isinstance(note.collaborators, list)
-    assert all(isinstance(collaborator, str) for collaborator in note.collaborators)
+
+    with pytest.raises(ValueError):
+        note.collaborators = ["user1", 123]
 
 
-def test_tags_property():
+def test_tags():
+    """Test setting and getting the note tags."""
     note = Note(1)
-    note.tags = [1, 2, 3]
-    assert note.tags == [1, 2, 3]
-    assert isinstance(note.tags, list)
-    assert all(isinstance(tag, int) for tag in note.tags)
+    note.tags = ["tag1", "tag2"]
+    assert note.tags == ["tag1", "tag2"]
+
+    with pytest.raises(ValueError):
+        note.tags = ["tag1", 123]
 
 
-def test_attachments_property():
+def test_attachments():
+    """Test setting and getting the note attachments."""
     note = Note(1)
     note.attachments = ["file1.txt", "file2.txt"]
     assert note.attachments == ["file1.txt", "file2.txt"]
-    assert isinstance(note.attachments, list)
-    assert all(isinstance(attachment, str) for attachment in note.attachments)
+
+    with pytest.raises(ValueError):
+        note.attachments = ["file1.txt", 123]
 
 
-def test_urls_property():
+def test_urls():
+    """Test setting and getting the note URLs."""
     note = Note(1)
-    note.urls = ["https://example.com"]
-    assert note.urls == ["https://example.com"]
-    assert isinstance(note.urls, list)
-    assert all(isinstance(url, str) for url in note.urls)
+    note.urls = ["https://example.com", "https://example.org"]
+    assert note.urls == ["https://example.com", "https://example.org"]
+
+    with pytest.raises(ValueError):
+        note.urls = ["https://example.com", 123]
 
 
-def test_child_notes_property():
-    note = Note(1)
-    note.child_notes = [2, 3]
-    assert note.child_notes == [2, 3]
-    assert isinstance(note.child_notes, list)
-    assert all(isinstance(child_note, int) for child_note in note.child_notes)
+def test_child_notes():
+    """Test setting and getting the child notes."""
+    note = Note(2)
+    note.child_notes = [0, 1]
+    assert note.child_notes == [0, 1]
+
+    with pytest.raises(ValueError):
+        note.child_notes = [0, 3]
+
+    with pytest.raises(ValueError):
+        note.child_notes = [0, "invalid"]
 
 
-def test_created_at_property():
+def test_created_at():
+    """Test setting and getting the created_at timestamp."""
     note = Note(1)
     now = datetime.now()
     note.created_at = now
     assert note.created_at == now
-    assert isinstance(note.created_at, datetime)
 
+    with pytest.raises(ValueError):
+        note.created_at = "invalid"
 
-def test_edited_at_property():
+    with pytest.raises(ValueError):
+        note.created_at = now + timedelta(days=1)
+
+def test_edited_at():
+    """Test setting and getting the edited_at timestamp."""
     note = Note(1)
     now = datetime.now()
-    note.edited_at = now
-    assert note.edited_at == now
-    assert isinstance(note.edited_at, datetime)
+    note.created_at = now
+    note.edited_at = now + timedelta(minutes=10)
+    assert note.edited_at == now + timedelta(minutes=10)
+
+    with pytest.raises(ValueError):
+        note.edited_at = "invalid"
+    
+    with pytest.raises(ValueError):
+        note.edited_at = now - timedelta(minutes=10)
 
 
-def test_reminder_property():
+def test_reminder():
+    """Test setting and getting the reminder timestamp."""
     note = Note(1)
     now = datetime.now()
-    note.reminder = now
-    assert note.reminder == now
-    assert isinstance(note.reminder, datetime)
+    note.reminder = now + timedelta(hours=1)
+    assert note.reminder == now + timedelta(hours=1)
+
+    with pytest.raises(ValueError):
+        note.reminder = "invalid"
+
+    with pytest.raises(ValueError):
+        note.reminder = now - timedelta(hours=1)
 
 
-def test_sprint_start_property():
+def test_sprint_dates():
+    """Test setting and getting the sprint start and end dates."""
     note = Note(1)
     now = datetime.now()
     note.sprint_start = now
+    note.sprint_end = now + timedelta(days=7)
     assert note.sprint_start == now
-    assert isinstance(note.sprint_start, datetime)
+    assert note.sprint_end == now + timedelta(days=7)
+
+    with pytest.raises(ValueError):
+        note.sprint_start = "invalid"
+
+    with pytest.raises(ValueError):
+        note.sprint_end = "invalid"
+
+    with pytest.raises(ValueError):
+        note.sprint_end = now - timedelta(days=1)
+
+    with pytest.raises(ValueError):
+        note.sprint_start = now + timedelta(days=8)
 
 
-def test_sprint_end_property():
-    note = Note(1)
-    now = datetime.now()
-    note.sprint_end = now
-    assert note.sprint_end == now
-    assert isinstance(note.sprint_end, datetime)
+def test_previous_version_backups():
+    """Test setting and getting the previous version backups."""
+    note1 = Note(1)
+    note2 = Note(2)
+    note3 = Note(3)
+    note3.previous_version_backups = [note1, note2]
+    assert note3.previous_version_backups == [note1, note2]
 
-
-def test_previous_version_backups_property():
-    note = Note(1)
-    backup_note = Note(2)
-    note.previous_version_backups = [backup_note]
-    assert note.previous_version_backups == [backup_note]
-    assert isinstance(note.previous_version_backups, list)
-    assert all(isinstance(backup, Note) for backup in note.previous_version_backups)
+    with pytest.raises(ValueError):
+        note3.previous_version_backups = [note1, "invalid"]

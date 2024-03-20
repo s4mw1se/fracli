@@ -113,13 +113,17 @@ class Note:
     def parent_note_id(self, value: int) -> None:
         """Set the parent note id."""
         if not isinstance(value, int):
-            raise ValueError("Invalid parent note id format. It should be an integer.")
+            raise ValueError(
+                "Invalid parent note id format. It should be an integer.")
         if value < 0:
-            raise ValueError("Invalid parent note id. It should be a positive integer.")
+            raise ValueError(
+                "Invalid parent note id. It should be a positive integer.")
         if value == self.note_id:
-            raise ValueError("Invalid parent note id. It should not be the same as the note id.")
+            raise ValueError(
+                "Invalid parent note id. It should not be the same as the note id.")
         if value > self.note_id:
-            raise ValueError("Invalid parent note id. It should be less than the current note id.")
+            raise ValueError(
+                "Invalid parent note id. It should be less than the current note id.")
         self._parent_note_id = value
 
     @property
@@ -131,14 +135,15 @@ class Note:
     def status(self, value: int) -> None:
         """Set the status of the note. 0: deleted, 1: active, 2: archived, 3: completed."""
         if not isinstance(value, int):
-            raise ValueError("Invalid status id format. It should be an integer.")
+            raise ValueError(
+                "Invalid status id format. It should be an integer.")
         if value < 0:
-            raise ValueError("Invalid status id. It should be a positive integer.")
+            raise ValueError(
+                "Invalid status id. It should be a positive integer.")
         if value > 3:
             raise ValueError("Invalid status id. It should be less than 3.")
-        
+
         self._status = value
-        
 
     @property
     def collaborators(self) -> list[str]:
@@ -149,8 +154,9 @@ class Note:
     def collaborators(self, value: list[str]) -> None:
         """Set the collaborators of the note."""
         if not all(isinstance(collaborator, str) for collaborator in value):
-            raise ValueError("Invalid collaborators format. It should be a list of strings.")
-        
+            raise ValueError(
+                "Invalid collaborators format. It should be a list of strings.")
+
         self._collaborators = value
 
     @property
@@ -159,11 +165,12 @@ class Note:
         return self._tags
 
     @tags.setter
-    def tags(self, value:list[str]) -> None:
+    def tags(self, value: list[str]) -> None:
         """Set the tags of the note."""
         if not all(isinstance(tag, str) for tag in value):
-            raise ValueError("Invalid tags format. It should be a list of strings.")
-    
+            raise ValueError(
+                "Invalid tags format. It should be a list of strings.")
+
         self._tags = value
 
     @property
@@ -175,7 +182,8 @@ class Note:
     def attachments(self, value: list[str]) -> None:
         """Set the attachments of the note."""
         if not all(isinstance(attachment, str) for attachment in value):
-            raise ValueError("Invalid attachments format. It should be a list of strings.")
+            raise ValueError(
+                "Invalid attachments format. It should be a list of strings.")
         self._attachments = value
 
     @property
@@ -187,7 +195,8 @@ class Note:
     def urls(self, value: str) -> None:
         """ Set the urls of the note."""
         if not all(isinstance(url, str) for url in value):
-            raise ValueError("Invalid urls format. It should be a list of strings.")
+            raise ValueError(
+                "Invalid urls format. It should be a list of strings.")
         self._urls = value
 
     @property
@@ -199,10 +208,12 @@ class Note:
     def child_notes(self, value: list[int]) -> None:
         """Set the child notes of the note."""
         if not all(isinstance(child_note, int) for child_note in value):
-            raise ValueError("Invalid child notes format. It should be a list of integers.")
-        
+            raise ValueError(
+                "Invalid child notes format. It should be a list of integers.")
+
         if not all(child_note < self.note_id for child_note in value):
-            raise ValueError("Invalid child notes. They should be less than the current note id.")
+            raise ValueError(
+                "Invalid child notes. They should be less than the current note id.")
         self._child_notes = value
 
     @property
@@ -213,24 +224,15 @@ class Note:
     @created_at.setter
     def created_at(self, value: datetime) -> None:
         """Set the created date of the note."""
-        if not isinstance(value, datetime):
-            raise ValueError("Invalid created date format. It should be a datetime object.")
-        
-        if value > datetime.now():
-            raise ValueError("Invalid created date. It should be less than the current date.")
-        
-        if self.edited_at and value > self.edited_at:
-            raise ValueError("Invalid created date. It should be less than or equal to the edited date.")
-        
-        if self.reminder and value > self.reminder:
-            raise ValueError("Invalid created date. It should be less than or equal to the reminder date.")
-        
-        if self.sprint_start and value > self.sprint_start:
-            raise ValueError("Invalid created date. It should be less than or equal to the sprint start date.")
-        
-        if self.sprint_end and value > self.sprint_end:
-            raise ValueError("Invalid created date. It should be less than or equal to the sprint end date.")
-        
+        if value:
+            if not isinstance(value, datetime):
+                raise ValueError(
+                    "Invalid created date format. It should be a datetime object.")
+        if isinstance(value, datetime):
+            if value > datetime.now():
+                raise ValueError(
+                    "Invalid created date. It should be less than the current date.")
+
         self._created_at = value
 
     @property
@@ -238,23 +240,22 @@ class Note:
         """Get the edited date of the note."""
         if not self._edited_at:
             return self.created_at
-        
+
         return self._edited_at
 
     @edited_at.setter
     def edited_at(self, value: datetime) -> None:
         """Set the edited date of the note."""
         if not isinstance(value, datetime):
-            raise ValueError("Invalid edited date format. It should be a datetime object.")
-        
-        if value > datetime.now():
-            raise ValueError("Invalid edited date. It should be less than the current date.")
-        
-        if self.created_at and value < self.created_at:
-            raise ValueError("Invalid edited date. It should be greater than or equal to the created date.")
-        
-        self._edited_at = value
+            raise ValueError(
+                "Invalid edited date format. It should be a datetime object.")
 
+        if self.created_at and value < self.created_at:
+            raise ValueError(
+                "Invalid edited date. It should be greater than or equal to the created date.")
+
+        self._edited_at = value
+        
     @property
     def reminder(self) -> datetime:
         """Get the reminder date of the note."""
@@ -263,15 +264,21 @@ class Note:
     @reminder.setter
     def reminder(self, value: datetime) -> None:
         """Set the reminder date of the note."""
-        if not isinstance(value, datetime):
-            raise ValueError("Invalid reminder date format. It should be a datetime object.")
         
-        if value < datetime.now():
-            raise ValueError("Invalid reminder date. It should be greater than the current date.")
-        
-        if self.created_at and value < self.created_at:
-            raise ValueError("Invalid reminder date. It should be greater than or equal to the created date.")
-        
+        if value:
+            if not isinstance(value, datetime):
+                raise ValueError(
+                    "Invalid reminder date format. It should be a datetime object.")
+            
+            if isinstance(value, datetime):
+                if value < datetime.now():
+                    raise ValueError(
+                        "Invalid reminder date. It should be greater than the current date.")
+
+                if self.created_at and value < self.created_at:
+                    raise ValueError(
+                        "Invalid reminder date. It should be greater than or equal to the created date.")
+
         self._reminder = value
 
     @property
@@ -283,11 +290,13 @@ class Note:
     def sprint_start(self, value: datetime) -> None:
         """Set the sprint start date of the note."""
         if not isinstance(value, datetime):
-            raise ValueError("Invalid sprint start date format. It should be a datetime object.")
-        
-        if value > self._sprint_end:
-            raise ValueError("Invalid sprint start date. It should be less than or equal to the sprint end date.")
-        
+            raise ValueError(
+                "Invalid sprint start date format. It should be a datetime object.")
+
+        if self._sprint_end and value > self._sprint_end:
+            raise ValueError(
+                "Invalid sprint start date. It should be less than or equal to the sprint end date.")
+
         self._sprint_start = value
 
     @property
@@ -299,19 +308,24 @@ class Note:
     def sprint_end(self, value: datetime) -> None:
         """Set the sprint end date of the note."""
         if not isinstance(value, datetime):
-            raise ValueError("Invalid sprint end date format. It should be a datetime object.")
-        
-        if value < self._sprint_start:
-            raise ValueError("Invalid sprint end date. It should be greater than or equal to the sprint start date.")
-        
-        if value < datetime.now():
-            raise ValueError("Invalid sprint end date. It should be greater than the current date.")
-        
-        if self.created_at and value < self.created_at:
-            raise ValueError("Invalid sprint end date. It should be greater than or equal to the created date.")
-        
-        self._sprint_end = value
+            raise ValueError(
+                "Invalid sprint end date format. It should be a datetime object.")
 
+        if self._sprint_start and value < self._sprint_start:
+            raise ValueError(
+                "Invalid sprint end date. It should be greater than or equal to the sprint start date."
+            )
+
+        if value < datetime.now():
+            raise ValueError(
+                "Invalid sprint end date. It should be greater than the current date.")
+
+        if self.created_at and value < self.created_at:
+            raise ValueError(
+                "Invalid sprint end date. It should be greater than or equal to the created date.")
+
+        self._sprint_end = value
+        
     @property
     def previous_version_backups(self) -> list['Note']:
         """Get the previous version backup of the note."""
@@ -321,6 +335,7 @@ class Note:
     def previous_version_backups(self, value: list['Note']) -> None:
         """Set the previous version backup of the note."""
         if not all(isinstance(note, Note) for note in value):
-            raise ValueError("Invalid previous version backups format. It should be a list of Note objects.")
-        
+            raise ValueError(
+                "Invalid previous version backups format. It should be a list of Note objects.")
+
         self._previous_version_backups = value
