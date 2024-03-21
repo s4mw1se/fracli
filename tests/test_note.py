@@ -2,7 +2,7 @@
 
 from datetime import datetime, timedelta
 import pytest
-from models.note import Note
+from src.models.note import Note
 
 def test_note_creation():
     """Test the creation of a Note object."""

@@ -1,10 +1,7 @@
 """A module to represent a note."""
 
 from datetime import datetime
-from dataclasses import dataclass
 
-
-@dataclass
 class Note:
     """A class to represent a note."""
 

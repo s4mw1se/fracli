@@ -4,7 +4,7 @@ from textual.widgets import Header, Footer, Input, Static, Button
 from textual.containers import Container
 from datetime import datetime
 
-import models.note
+from models.note import Note
 
 
 class NotePrompter(App):
